@@ -8,4 +8,4 @@ And hope too see:
 
 ![image](https://user-images.githubusercontent.com/83378025/118904651-b13a9380-b8f0-11eb-9c33-d9017328f8c4.png).
 
-Otherwise you have some packages that aren't sopported which would be listed.
+Otherwise you have some packages that aren't sopported, which would be listed.
