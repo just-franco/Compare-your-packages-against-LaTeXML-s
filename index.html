@@ -9,6 +9,7 @@
 </head>
 
 <body>
+  <h1>Select your .tex file.</h1>
   <input type="file" onchange="readFile(this)">
   <div id="message"></div>
 
@@ -45,7 +46,7 @@
         }
 
         if (userUnsupportedPackages.length) {
-          message.innerText = `The followings packages are unsupported: ${userUnsupportedPackages.join(", ")}`
+          message.innerText = `The following packages aren't supported: ${userUnsupportedPackages.join(", ")}`
         } else {
           message.innerText = `The whole packages are supported. Well done!`
         }
