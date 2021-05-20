@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compare Your Packages Against LaTeXML's</title>
+</head>
+
+<body>
+  <input type="file" onchange="readFile(this)">
+  <div id="message"></div>
+
+  <script>
+    const ACTUALLY_SUPPORTED_PACKAGES = `
+    a0size, a4, a4wide, aas_macros, aasms, aaspp, aastex, accents, acronym, ae, aecompl, afterpage, aipproc, algc, algcompatible, algmatlab, algorithm, algorithm2e, algorithmic, algorithmicx, algpascal, algpseudocode, alltt, amsbsy, amscd, amsfonts, amsgen, amsmath, amsopn, amsppt, amsrefs, amssymb, amstex, amstext, amsthm, amsxtra, apjfonts, appendix, array, attachfile, authblk, avant, babel, balance, bbm, bbold, beton, bibunits, blindtext, bm, bookman, booktabs, braket, breakurl, calc, calrsfs, cancel, caption, cases, ccfonts, chancery, chapterbib, charter, chngcntr, circuitikz, cite, citesort, cleveref, cmbright, color, colordvi, colortbl, comment, concmath, courier, crop, cropmark, csquotes, dcolumn, deluxetable, doublespace, dsfont, ellipsis, elsart, empheq, emulateapj, emulateapj5, endnotes, english, enumerate, enumitem, epigraph, epsf, epsfig, epstopdf, esint, etex, etoolbox, eucal, eufrak, euler, eulervm, eurosym, euscript, expl3, exscale, fancyhdr, fancyheadings, fix-cm, fixltx2e, flafter, fleqn, float, floatfig, floatflt, floatpag, flowchart, flushend, fontenc, fontspec, footmisc, footnote, fourier, framed, fullpage, gensymb, geometry, german, glossaries, graphics, graphicx, grffile, helvet, here, hhline, html, hyperref, hyperxmp, icml, ifluatex, ifpdf, ifthen, ifvtex, ifxetex, import, indentfirst, inputenc, iopams, jheppub, keyval, lastpage, latexml, latexsym, lineno, lipsum, listings, listingsutf8, lmodern, longtable, lscape, luximono, lxRDFa, makecell, makeidx, marvosym, mathbbol, mathdots, mathpazo, mathpple, mathptm, mathptmx, mathrsfs, mathtools, microtype, mleftright, multicol, multido, multirow, nameref, natbib, neurips, newcent, newfloat, newlfont, newtxmath, newtxtext, ngerman, nicefrac, nopageno, ntheorem, numprint, palatino, paralist, parskip, pdflscape, pdfpages, pdfsync, pgf, pgfplots, physics, pifont, placeins, preview, psfig, pslatex, pspicture, pst-grad, pst-node, pstricks, pxfonts, ragged2e, relsize, remreset, revsymb, revtex, revtex4, rotate, rotating, rsfs, scalefnt, sectsty, setspace, showkeys, sidecap, siunitx, slashed, soul, srcltx, stfloats, stmaryrd, subcaption, subfig, subfigure, subfiles, subfloat, supertabular, svg, t1enc, tablefootnote, tabularx, tabulary, textcase, textcomp, texvc, theorem, thm-restate, thmtools, threeparttable, tikz-3dplot, tikz, times, titlesec, titling, tocbibind, todonotes, tracefnt, transparent, turing, twoopt, txfonts, type1cm, ulem, underscore, undertilde, units, upgreek, upref, url, utopia, varioref, varwidth, verbatim, vmargin, wasysym, wiki, wrapfig, xargs, xcolor, xkeyval, xkvview, xparse, xspace, xunicode, yfonts
+    `.trim().split(", ")
+
+    console.log(ACTUALLY_SUPPORTED_PACKAGES);
+
+    const userUnsupportedPackages = []
+    function comparePackage(package) {
+      if (!ACTUALLY_SUPPORTED_PACKAGES.includes(package)) addUnsupportedPackage(package)
+    }
+    function addUnsupportedPackage(package) {
+      userUnsupportedPackages.push(package)
+    }
+
+    function readFile(input) {
+      let file = input.files[0];
+
+      let reader = new FileReader();
+
+      reader.readAsText(file);
+
+      reader.onload = function () {
+        const data = reader.result
+        const packages = data.matchAll(/\\usepackage\{(?<list>.+?)}/g)
+        for (const package of packages) {
+          const list = package.groups.list;
+
+          if (list.includes(",")) list.split(',').map(package => comparePackage(package.trim()))
+          else comparePackage(list.trim())
+        }
+
+        if (userUnsupportedPackages.length) {
+          message.innerText = `The followings packages are unsupported: ${userUnsupportedPackages.join(", ")}`
+        } else {
+          message.innerText = `The whole packages are supported. Well done!`
+        }
+      }
+
+      reader.onerror = function () {
+        console.log(reader.error);
+      };
+    }
+  </script>
+</body>
+
+</html>
